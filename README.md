@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Ezinix Customer Portal
 
-## Getting Started
+Customer-facing B2B portal for Ezinix OMS built with Next.js (App Router), Supabase SSR auth, Tailwind CSS, Lucide icons, and PWA support.
 
-First, run the development server:
+## Project Setup
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Create `.env.local`:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+3. Ensure Supabase Email OTP login is enabled and SMTP is configured.
+
+## Run Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Deploy to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Push this repository to GitHub/GitLab/Bitbucket.
+2. Import project in [Vercel](https://vercel.com).
+3. Add the same env vars in Vercel project settings:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Deploy.  
+5. After deployment, test OTP login and protected routes.
 
-## Learn More
+## Run RLS SQL in Supabase SQL Editor
 
-To learn more about Next.js, take a look at the following resources:
+Use the SQL below (adapt if your existing policies differ):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sql
+ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE returns ENABLE ROW LEVEL SECURITY;
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+CREATE POLICY "customers_select_own" ON customers
+FOR SELECT USING (email_address = auth.email());
 
-## Deploy on Vercel
+CREATE POLICY "orders_select_own" ON orders
+FOR SELECT USING (
+  customer_id = (SELECT customer_id FROM customers WHERE email_address = auth.email())
+);
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+CREATE POLICY "returns_select_own" ON returns
+FOR SELECT USING (
+  customer_id = (SELECT customer_id FROM customers WHERE email_address = auth.email())
+);
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+CREATE POLICY "returns_insert_own" ON returns
+FOR INSERT WITH CHECK (
+  customer_id = (SELECT customer_id FROM customers WHERE email_address = auth.email())
+);
+```
+
+## How to Add Customers to the System
+
+1. Create customer record in `customers` table with:
+   - `customer_name`
+   - `email_address` (must match login email)
+   - `phone_number`, `company_address`, `contact_person`, etc.
+2. Ensure customer has orders in `orders` with matching `customer_id`.
+3. Customer can then log in via email OTP (if `shouldCreateUser: false`, only existing auth users can receive OTP).
+4. If required, pre-create user in Supabase Auth with the same email.
+
+## Notes
+
+- Portal reads from the same Supabase DB as OMS backend.
+- Customer-visible tables are always filtered by `customer_id`.
+- `invoice_id` is treated as invoice URL field for download.
+- PWA manifest is available at `/manifest.json`.
