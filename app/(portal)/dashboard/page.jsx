@@ -69,21 +69,25 @@ export default function DashboardPage() {
             title="Pending" 
             value={formatCurrencyShort(stats.pending)} 
             icon={<AlertCircle size={20} className={stats.pending > 0 ? "text-rose-400" : "text-slate-400"} />} 
+            href="/payments"
           />
           <Card 
             title="Orders" 
             value={stats.totalOrders} 
             icon={<LayoutDashboard size={20} className="text-[#6c63ff]" />} 
+            href="/orders"
           />
           <Card 
             title="Total Value" 
             value={formatCurrencyShort(stats.totalValue)} 
             icon={<TrendingUp size={20} className="text-emerald-400" />} 
+            href="/orders"
           />
           <Card 
             title="Returns Open" 
             value={stats.openReturns} 
             icon={<RefreshCcw size={20} className="text-amber-400" />} 
+            href="/returns"
           />
         </div>
       )}
@@ -195,14 +199,24 @@ export default function DashboardPage() {
   );
 }
 
-function Card({ title, value, icon }) {
-  return (
-    <div className="flex flex-col justify-between rounded-2xl border border-[#1e1e2e] bg-[#13131a] p-4 md:p-6 shadow-lg md:shadow-sm">
+function Card({ title, value, icon, href }) {
+  const content = (
+    <div className="flex flex-col h-full justify-between rounded-2xl border border-[#1e1e2e] bg-[#13131a] p-4 md:p-6 shadow-lg md:shadow-sm transition-all hover:border-[#6c63ff]/50 hover:bg-[#1a1a2e] group cursor-pointer">
       <div className="mb-2 md:mb-4 flex items-center justify-between">
-        <p className="text-xs font-medium text-slate-400 md:text-sm">{title}</p>
-        <div className="hidden md:block rounded-lg bg-[#1a1a2e] p-2">{icon}</div>
+        <p className="text-xs font-medium text-slate-400 md:text-sm group-hover:text-slate-300 transition-colors">{title}</p>
+        <div className="hidden md:block rounded-lg bg-[#1a1a2e] p-2 group-hover:bg-[#6c63ff]/10 transition-colors">{icon}</div>
       </div>
       <p className="text-xl font-bold text-white md:text-2xl lg:text-3xl">{value}</p>
     </div>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="block h-full">
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 }
