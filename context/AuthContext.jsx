@@ -27,21 +27,24 @@ export function AuthProvider({ children }) {
     let mounted = true;
 
     const init = async () => {
+      console.log("AuthProvider: Starting init...");
       try {
         const { data } = await supabase.auth.getSession();
         const currentSession = data?.session ?? null;
+        console.log("AuthProvider: Session fetched:", currentSession ? "Logged in" : "No session");
         
         if (mounted) {
           setSession(currentSession);
-          // Set loading to false as soon as we know if we have a session
           setLoading(false);
+          console.log("AuthProvider: Loading set to false");
           
           if (currentSession?.user?.email) {
+            console.log("AuthProvider: Loading customer data...");
             loadCustomer(currentSession.user.email);
           }
         }
       } catch (err) {
-        console.error("Auth init error:", err);
+        console.error("AuthProvider: Init error:", err);
         if (mounted) setLoading(false);
       }
     };
