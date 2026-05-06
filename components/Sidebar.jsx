@@ -10,7 +10,6 @@ const nav = [
   { href: "/orders", label: "Orders", icon: ListOrdered },
   { href: "/returns", label: "Returns", icon: RotateCcw },
   { href: "/payments", label: "Payments", icon: Wallet },
-  { href: "/account", label: "Account", icon: UserCircle2 },
 ];
 
 export default function Sidebar() {
@@ -48,7 +47,7 @@ export default function Sidebar() {
           })}
         </nav>
         <div className="border-t border-[#1e1e2e] p-3 lg:p-4">
-          <div className="flex items-center justify-center gap-3 lg:justify-start">
+          <Link href="/account" className="flex items-center justify-center gap-3 lg:justify-start">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1a1a2e] text-sm font-semibold text-[#6c63ff]">
               {customer?.customer_name?.charAt(0) || "U"}
             </div>
@@ -60,12 +59,12 @@ export default function Sidebar() {
                 Log out
               </button>
             </div>
-          </div>
+          </Link>
         </div>
       </aside>
 
       {/* MOBILE BOTTOM NAV */}
-      <nav className="safe-bottom fixed bottom-0 left-0 right-0 z-40 grid h-[var(--bottom-nav-height)] grid-cols-5 border-t border-[#1e1e2e] bg-[#0f0f18] md:hidden">
+      <nav className="safe-bottom fixed bottom-0 left-0 right-0 z-40 grid h-[var(--bottom-nav-height)] grid-cols-4 border-t border-[#1e1e2e] bg-[#0f0f18] md:hidden">
         {nav.map((item) => {
           const ActiveIcon = item.icon;
           const active = pathname.startsWith(item.href);

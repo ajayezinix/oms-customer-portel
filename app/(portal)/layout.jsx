@@ -4,7 +4,8 @@ import Sidebar from "@/components/Sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Bell } from "lucide-react";
+import { Bell, User } from "lucide-react";
+import Link from "next/link";
 
 export default function PortalLayout({ children }) {
   const { loading, session, customer } = useAuth();
@@ -35,28 +36,31 @@ export default function PortalLayout({ children }) {
       {/* Main Content Wrapper */}
       <div className="flex w-full flex-col md:ml-[var(--sidebar-collapsed-width)] lg:ml-[var(--sidebar-width)] transition-all duration-300">
         
-        {/* FIXED HEADER */}
-        <header className="fixed top-0 z-20 flex h-[var(--top-header-height)] w-full items-center justify-between border-b border-[#1e1e2e] bg-[#0f0f18] px-4 md:w-[calc(100%-var(--sidebar-collapsed-width))] lg:w-[calc(100%-var(--sidebar-width))] lg:px-8">
+        {/* FIXED HEADER (Desktop Only) */}
+        <header className="fixed top-0 z-20 hidden md:flex h-[var(--top-header-height)] w-full items-center justify-between border-b border-[#1e1e2e] bg-[#0f0f18] px-4 md:w-[calc(100%-var(--sidebar-collapsed-width))] lg:w-[calc(100%-var(--sidebar-width))] lg:px-8">
           <h1 className="text-lg font-semibold text-white md:text-xl relative z-10">{getPageTitle()}</h1>
           
-          {/* Mobile Center Logo */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden">
-            <span className="font-sifonn text-xl tracking-widest text-[#7b5dfc]">EZINIX</span>
-          </div>
-
           <div className="flex items-center gap-4 relative z-10">
             <button className="relative flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-full hover:bg-[#1a1a2e]">
               <Bell size={20} className="text-slate-300" />
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"></span>
             </button>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#6c63ff] text-sm font-semibold text-white md:hidden">
+            <Link href="/account" className="flex h-8 w-8 items-center justify-center rounded-full bg-[#6c63ff] text-sm font-semibold text-white">
               {customer?.customer_name?.charAt(0) || "U"}
-            </div>
+            </Link>
           </div>
         </header>
 
+        {/* FLOATING MOBILE ACCOUNT BUTTON */}
+        <Link 
+          href="/account" 
+          className="fixed top-4 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-[#6c63ff] text-white shadow-lg shadow-[#6c63ff]/20 md:hidden border-2 border-[#0a0a0f]"
+        >
+          {customer?.customer_name?.charAt(0) || <User size={18} />}
+        </Link>
+
         {/* PAGE CONTENT */}
-        <main className="w-full flex-1 px-4 pt-[calc(var(--top-header-height)+16px)] pb-[calc(var(--bottom-nav-height)+24px)] md:px-8 md:pt-[calc(var(--top-header-height)+32px)] md:pb-8">
+        <main className="w-full flex-1 px-4 pt-4 pb-[calc(var(--bottom-nav-height)+24px)] md:px-8 md:pt-[calc(var(--top-header-height)+32px)] md:pb-8">
           <div className="mx-auto w-full max-w-[1400px]">{children}</div>
         </main>
       </div>
