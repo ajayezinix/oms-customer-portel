@@ -25,12 +25,21 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const init = async () => {
-      const {
-        data: { session: currentSession },
-      } = await supabase.auth.getSession();
-      setSession(currentSession);
-      await loadCustomer(currentSession?.user?.email);
-      setLoading(false);
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        
+        const currentSession = data?.session ?? null;
+        setSession(currentSession);
+        
+        if (currentSession?.user?.email) {
+          await loadCustomer(currentSession.user.email);
+        }
+      } catch (err) {
+        console.error("Auth initialization error:", err);
+      } finally {
+        setLoading(false);
+      }
     };
     init();
 

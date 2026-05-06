@@ -17,7 +17,14 @@ export default function PortalLayout({ children }) {
   }, [loading, router, session]);
 
   if (loading) {
-    return <div className="p-6 text-slate-400">Loading session...</div>;
+    return (
+      <div className="flex h-[100dvh] w-full items-center justify-center bg-[#0a0a0f]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#6c63ff] border-t-transparent"></div>
+          <p className="text-sm font-medium text-slate-400">Loading session...</p>
+        </div>
+      </div>
+    );
   }
 
   const getPageTitle = () => {
