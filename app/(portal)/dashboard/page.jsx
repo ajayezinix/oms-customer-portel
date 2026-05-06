@@ -96,7 +96,7 @@ export default function DashboardPage() {
           </table>
         </div>
       </section>
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-4">
         <Link href="/orders" className="rounded-xl border border-[#1e1e2e] bg-[#13131a] p-5 hover:bg-[#1a1a2e]">
           <h3 className="font-semibold">Orders</h3>
           <p className="mt-1 text-sm text-slate-400">Track all order statuses.</p>
@@ -108,6 +108,10 @@ export default function DashboardPage() {
         <Link href="/payments" className="rounded-xl border border-[#1e1e2e] bg-[#13131a] p-5 hover:bg-[#1a1a2e]">
           <h3 className="font-semibold">Payments</h3>
           <p className="mt-1 text-sm text-slate-400">View payment and due breakdown.</p>
+        </Link>
+        <Link href="/account" className="rounded-xl border border-[#1e1e2e] bg-[#13131a] p-5 hover:bg-[#1a1a2e]">
+          <h3 className="font-semibold">Account</h3>
+          <p className="mt-1 text-sm text-slate-400">See profile and documents.</p>
         </Link>
       </section>
     </div>

@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ListOrdered, RotateCcw, Wallet } from "lucide-react";
+import { LayoutDashboard, ListOrdered, RotateCcw, Wallet, UserCircle2 } from "lucide-react";
 
 const nav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/orders", label: "Orders", icon: ListOrdered },
   { href: "/returns", label: "Returns", icon: RotateCcw },
   { href: "/payments", label: "Payments", icon: Wallet },
+  { href: "/account", label: "Account", icon: UserCircle2 },
 ];
 
 export default function Sidebar() {
@@ -36,7 +37,7 @@ export default function Sidebar() {
           })}
         </nav>
       </aside>
-      <nav className="fixed bottom-0 left-0 right-0 z-20 grid grid-cols-4 border-t border-[#1e1e2e] bg-[#0f0f18] p-2 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-20 grid grid-cols-5 border-t border-[#1e1e2e] bg-[#0f0f18]/95 p-2 pb-[max(8px,env(safe-area-inset-bottom))] backdrop-blur md:hidden">
         {nav.map((item) => {
           const ActiveIcon = item.icon;
           const active = pathname.startsWith(item.href);
@@ -44,8 +45,8 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center gap-1 rounded-lg py-2 text-xs ${
-                active ? "text-white" : "text-slate-400"
+              className={`flex flex-col items-center gap-1 rounded-lg py-2 text-[11px] ${
+                active ? "bg-[#1f1f32] text-white" : "text-slate-400"
               }`}
             >
               <ActiveIcon size={18} />

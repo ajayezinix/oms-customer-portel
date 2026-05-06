@@ -6,6 +6,11 @@ body {
   @apply bg-[#0a0a0f] text-white antialiased;
 }
 
+html,
+body {
+  min-height: 100%;
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: #2e2e3e #0a0a0f;

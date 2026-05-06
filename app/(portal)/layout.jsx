@@ -18,9 +18,11 @@ export default function PortalLayout({ children }) {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-[100dvh] bg-[#0a0a0f]">
       <Sidebar />
-      <main className="w-full p-4 pb-20 md:p-8 md:pb-8">{children}</main>
+      <main className="w-full px-4 pb-24 pt-4 md:p-8 md:pb-8">
+        <div className="mx-auto w-full max-w-6xl">{children}</div>
+      </main>
     </div>
   );
 }

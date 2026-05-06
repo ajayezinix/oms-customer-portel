@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request) {
+  if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -31,7 +35,7 @@ export async function middleware(request) {
   } = await supabase.auth.getSession();
 
   const pathname = request.nextUrl.pathname;
-  const protectedRoutes = ["/dashboard", "/orders", "/returns", "/payments"];
+  const protectedRoutes = ["/dashboard", "/orders", "/returns", "/payments", "/account"];
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
 
   if (!session && isProtected) {
@@ -50,5 +54,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/orders/:path*", "/returns/:path*", "/payments/:path*", "/login"],
+  matcher: ["/dashboard/:path*", "/orders/:path*", "/returns/:path*", "/payments/:path*", "/account/:path*", "/login"],
 };

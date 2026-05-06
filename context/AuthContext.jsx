@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  const authDisabled = process.env.NEXT_PUBLIC_DISABLE_AUTH === "true";
   const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
   const [session, setSession] = useState(null);
@@ -24,6 +25,17 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
+    if (authDisabled) {
+      setSession({ user: { email: "demo@ezinix.local" } });
+      setCustomer({
+        customer_id: "00000000-0000-0000-0000-000000000000",
+        customer_name: "Demo Customer",
+        email_address: "demo@ezinix.local",
+      });
+      setLoading(false);
+      return;
+    }
+
     const init = async () => {
       const {
         data: { session: currentSession },
@@ -43,9 +55,13 @@ export function AuthProvider({ children }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [router, supabase]);
+  }, [authDisabled, router, supabase]);
 
   const logout = async () => {
+    if (authDisabled) {
+      router.push("/dashboard");
+      return;
+    }
     await supabase.auth.signOut();
     setCustomer(null);
     router.push("/login");
