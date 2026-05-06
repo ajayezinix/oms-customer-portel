@@ -123,7 +123,7 @@ export default function OrdersPage() {
           </div>
           <h3 className="text-lg font-semibold text-white">No orders found</h3>
           <p className="mt-1 text-sm text-slate-400 max-w-sm">
-            We couldn't find any orders matching your current search or filter criteria.
+            We couldn&apos;t find any orders matching your current search or filter criteria.
           </p>
           {(search || filterType !== "all") && (
             <button 

@@ -66,7 +66,7 @@ export default function PaymentsPage() {
           </div>
           <h3 className="text-lg font-semibold text-white">No payment history</h3>
           <p className="mt-1 text-sm text-slate-400 max-w-sm">
-            You don't have any orders with payment records yet.
+            You don&apos;t have any orders with payment records yet.
           </p>
         </div>
       ) : (

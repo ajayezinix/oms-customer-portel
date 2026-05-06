@@ -212,7 +212,7 @@ export default function LoginPage() {
                 disabled={counter > 0 || loading}
                 className="text-sm font-medium text-[#6c63ff] hover:text-[#5a52d5] disabled:text-slate-500 transition-colors"
               >
-                {counter > 0 ? `Resend code in ${counter}s` : "Didn't receive a code? Resend"}
+                {counter > 0 ? `Resend code in ${counter}s` : "Didn&apos;t receive a code? Resend"}
               </button>
               
               <button 

@@ -81,7 +81,7 @@ export default function ReturnsPage() {
           </div>
           <h3 className="text-lg font-semibold text-white">No returns yet</h3>
           <p className="mt-1 text-sm text-slate-400 max-w-sm">
-            You haven't requested any returns. If you need to return an item, tap the button below.
+            You haven&apos;t requested any returns. If you need to return an item, tap the button below.
           </p>
           <button 
             onClick={() => setShowModal(true)} 
