@@ -1,17 +1,47 @@
 "use client";
 
-import { X, Clock3, FileText, CheckCircle2, User, Calendar, CreditCard } from "lucide-react";
-import StatusBadge from "./StatusBadge";
-import { formatCurrencyINR, formatDateIN } from "@/lib/format";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function OrderDetailModal({ order, onClose }) {
+  const [documents, setDocuments] = useState({ invoice: [], order_detail: [] });
+  const [fetchingDocs, setFetchingDocs] = useState(false);
+
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (order) {
       document.body.style.overflow = "hidden";
+      
+      // Fetch all documents for this order
+      const fetchDocs = async () => {
+        if (!order.order_id) return;
+        setFetchingDocs(true);
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("order_documents")
+          .select("file_url,file_name,document_category")
+          .eq("order_id", order.order_id)
+          .in("document_category", ["invoice", "order_detail"]);
+        
+        const sorted = { invoice: [], order_detail: [] };
+        (data ?? []).forEach(doc => {
+          if (sorted[doc.document_category]) {
+            sorted[doc.document_category].push(doc);
+          }
+        });
+
+        // Fallback for legacy invoice_id if no invoice doc found
+        if (sorted.invoice.length === 0 && order.invoice_id?.startsWith("http")) {
+          sorted.invoice.push({ file_url: order.invoice_id, file_name: "Invoice" });
+        }
+
+        setDocuments(sorted);
+        setFetchingDocs(false);
+      };
+      fetchDocs();
     } else {
       document.body.style.overflow = "";
+      setDocuments({ invoice: [], order_detail: [] });
     }
     return () => {
       document.body.style.overflow = "";
@@ -117,19 +147,65 @@ export default function OrderDetailModal({ order, onClose }) {
             <h4 className="mb-4 flex items-center gap-2 text-sm font-medium text-slate-400">
               <FileText size={16} /> Documents
             </h4>
-            {order.invoice_id ? (
-              <a
-                href={order.invoice_id}
-                target="_blank"
-                rel="noreferrer"
-                className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-[#6c63ff] px-4 py-3 font-medium text-white transition-colors hover:bg-[#5a52d5] md:min-h-[40px] md:w-auto"
-              >
-                <FileText size={18} /> Download Invoice
-              </a>
+            {fetchingDocs ? (
+              <div className="flex items-center gap-3 rounded-xl border border-[#1e1e2e] bg-[#1a1a2e]/30 p-4">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#6c63ff] border-t-transparent"></div>
+                <p className="text-sm text-slate-400">Locating documents...</p>
+              </div>
+            ) : (documents.invoice.length > 0 || documents.order_detail.length > 0) ? (
+              <div className="grid gap-3">
+                {/* Order Detail Files */}
+                {documents.order_detail.map((doc, i) => (
+                  <a
+                    key={`detail-${i}`}
+                    href={doc.file_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-[#1e1e2e] bg-[#0a0a0f] p-4 transition-all hover:bg-[#1a1a2e]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1a1a2e] text-[#6c63ff]">
+                        <FileText size={18} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">Order Detail File</p>
+                        <p className="text-[10px] text-slate-500 truncate max-w-[150px]">{doc.file_name}</p>
+                      </div>
+                    </div>
+                    <div className="rounded-lg bg-[#6c63ff] px-3 py-1.5 text-xs font-semibold text-white">
+                      View
+                    </div>
+                  </a>
+                ))}
+
+                {/* Invoices */}
+                {documents.invoice.map((doc, i) => (
+                  <a
+                    key={`invoice-${i}`}
+                    href={doc.file_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-[#6c63ff]/20 bg-[#6c63ff]/5 p-4 transition-all hover:bg-[#6c63ff]/10"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#6c63ff]/20 text-[#6c63ff]">
+                        <FileText size={18} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">Invoice</p>
+                        <p className="text-[10px] text-slate-500 truncate max-w-[150px]">{doc.file_name}</p>
+                      </div>
+                    </div>
+                    <div className="rounded-lg bg-[#6c63ff] px-3 py-1.5 text-xs font-semibold text-white shadow-lg shadow-[#6c63ff]/20">
+                      Download
+                    </div>
+                  </a>
+                ))}
+              </div>
             ) : (
               <div className="flex items-center gap-3 rounded-xl border border-dashed border-[#2e2e3e] bg-[#1a1a2e]/50 p-4">
                 <Clock3 size={20} className="text-slate-500" /> 
-                <p className="text-sm text-slate-400">Invoice will be available once generated.</p>
+                <p className="text-sm text-slate-400">No documents available yet.</p>
               </div>
             )}
           </section>

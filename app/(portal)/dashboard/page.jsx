@@ -28,14 +28,14 @@ export default function DashboardPage() {
         .select("return_id,approval_status")
         .eq("customer_id", customer.customer_id);
       const totalValue = (orders ?? []).reduce((sum, o) => sum + Number(o.total_order_amount || 0), 0);
-      const outstanding = (orders ?? []).reduce(
+      const pending = (orders ?? []).reduce(
         (sum, o) => sum + Math.max(0, Number(o.total_order_amount || 0) - Number(o.payment_received || 0)),
         0
       );
       setStats({
         totalOrders: orders?.length ?? 0,
         totalValue,
-        outstanding,
+        pending,
         openReturns: (returns ?? []).filter((r) => r.approval_status === "pending").length,
       });
       setRecentOrders((orders ?? []).slice(0, 5));
@@ -66,9 +66,9 @@ export default function DashboardPage() {
       ) : (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4 lg:gap-6">
           <Card 
-            title="Outstanding" 
-            value={formatCurrencyShort(stats.outstanding)} 
-            icon={<AlertCircle size={20} className={stats.outstanding > 0 ? "text-rose-400" : "text-slate-400"} />} 
+            title="Pending" 
+            value={formatCurrencyShort(stats.pending)} 
+            icon={<AlertCircle size={20} className={stats.pending > 0 ? "text-rose-400" : "text-slate-400"} />} 
           />
           <Card 
             title="Orders" 
@@ -100,7 +100,7 @@ export default function DashboardPage() {
         {/* Mobile View: Card List */}
         <div className="grid gap-3 md:hidden">
           {recentOrders.map((o) => {
-            const isOutstanding = Number(o.total_order_amount || 0) - Number(o.payment_received || 0) > 0;
+            const isPending = Number(o.total_order_amount || 0) - Number(o.payment_received || 0) > 0;
             const dueAmount = Number(o.total_order_amount || 0) - Number(o.payment_received || 0);
             
             return (
@@ -119,16 +119,20 @@ export default function DashboardPage() {
                   <StatusBadge status={o.fulfillment_status} />
                 </div>
 
-                {isOutstanding ? (
+                {isPending ? (
                   <div className="flex items-center gap-2 rounded-lg bg-rose-500/10 p-2 text-xs font-medium text-rose-400 border border-rose-500/20">
                     <AlertCircle size={14} />
                     <span>Pay {formatCurrencyINR(dueAmount)}</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 p-2 text-xs font-medium text-emerald-400 border border-emerald-500/20">
+                  <Link 
+                    href={`/orders?orderId=${o.order_id}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-2 rounded-lg bg-emerald-500/10 p-2 text-xs font-medium text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
+                  >
                     <Download size={14} />
                     <span>Download Invoice</span>
-                  </div>
+                  </Link>
                 )}
               </Link>
             );

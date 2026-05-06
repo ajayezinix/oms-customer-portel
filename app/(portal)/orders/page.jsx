@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search, Filter, SlidersHorizontal } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { formatCurrencyINR, formatDateIN } from "@/lib/format";
@@ -10,6 +11,7 @@ import LoadingSkeleton from "@/components/LoadingSkeleton";
 
 export default function OrdersPage() {
   const { customer, supabase } = useAuth();
+  const searchParams = useSearchParams();
   const [orders, setOrders] = useState([]);
   const [search, setSearch] = useState("");
   const [activeOrder, setActiveOrder] = useState(null);
@@ -50,6 +52,17 @@ export default function OrdersPage() {
     };
     load();
   }, [customer?.customer_id, supabase]);
+
+  // Handle deep link to specific order
+  useEffect(() => {
+    if (orders.length > 0 && searchParams.get("orderId")) {
+      const orderId = searchParams.get("orderId");
+      const order = orders.find(o => o.order_id === orderId);
+      if (order) {
+        setActiveOrder(order);
+      }
+    }
+  }, [orders, searchParams]);
 
   const filtered = useMemo(() => {
     let result = orders.filter((o) =>

@@ -27,7 +27,7 @@ export default function PaymentsPage() {
     run();
   }, [customer?.customer_id, supabase]);
 
-  const outstanding = useMemo(
+  const pending = useMemo(
     () =>
       orders.reduce(
         (sum, order) => sum + Math.max(0, Number(order.total_order_amount) - Number(order.payment_received || 0)),
@@ -45,13 +45,13 @@ export default function PaymentsPage() {
         {!loading && (
           <div className="flex items-center justify-between rounded-2xl border border-[#1e1e2e] bg-gradient-to-r from-[#13131a] to-[#1a1a2e] p-5 shadow-lg w-full md:w-auto md:min-w-[300px]">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Total Outstanding</p>
-              <p className={`mt-1 text-2xl md:text-3xl font-bold ${outstanding > 0 ? "text-rose-400" : "text-emerald-400"}`}>
-                {formatCurrencyINR(outstanding)}
+              <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Total Pending</p>
+              <p className={`mt-1 text-2xl md:text-3xl font-bold ${pending > 0 ? "text-rose-400" : "text-emerald-400"}`}>
+                {formatCurrencyINR(pending)}
               </p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0a0a0f] border border-[#2e2e3e]">
-              <Wallet className={outstanding > 0 ? "text-rose-400" : "text-emerald-400"} size={24} />
+              <Wallet className={pending > 0 ? "text-rose-400" : "text-emerald-400"} size={24} />
             </div>
           </div>
         )}
