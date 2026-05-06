@@ -58,13 +58,7 @@ export default function PortalLayout({ children }) {
           </div>
         </header>
 
-        {/* FLOATING MOBILE ACCOUNT BUTTON */}
-        <Link 
-          href="/account" 
-          className="fixed top-4 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-[#6c63ff] text-white shadow-lg shadow-[#6c63ff]/20 md:hidden border-2 border-[#0a0a0f]"
-        >
-          {customer?.customer_name?.charAt(0) || <User size={18} />}
-        </Link>
+
 
         {/* PAGE CONTENT */}
         <main className="w-full flex-1 px-4 pt-4 pb-[calc(var(--bottom-nav-height)+24px)] md:px-8 md:pt-[calc(var(--top-header-height)+32px)] md:pb-8">
