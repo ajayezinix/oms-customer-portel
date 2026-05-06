@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { formatCurrencyINR, formatCurrencyShort, formatDateIN } from "@/lib/format";
-import { LogOut, LayoutDashboard, TrendingUp, AlertCircle, RefreshCcw, ChevronRight } from "lucide-react";
+import { LogOut, LayoutDashboard, TrendingUp, AlertCircle, RefreshCcw, ChevronRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import StatusBadge from "@/components/StatusBadge";
@@ -49,8 +49,8 @@ export default function DashboardPage() {
       {/* Welcome Message */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-white md:text-2xl lg:text-3xl">
-            Welcome back, {customer?.customer_name?.split(" ")[0] || "Customer"} 👋
+          <h1 className="flex items-center gap-2 text-xl font-bold text-white md:text-2xl lg:text-3xl">
+            Welcome back, {customer?.customer_name?.split(" ")[0] || "Customer"} <Sparkles className="text-amber-400" size={24} />
           </h1>
           <p className="text-sm text-slate-400 mt-1 truncate max-w-[300px] md:max-w-none">
             {customer?.company_name || "Manage your orders and business metrics."}
