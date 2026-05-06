@@ -4,6 +4,7 @@ import Sidebar from "@/components/Sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 import { Bell } from "lucide-react";
 
 export default function PortalLayout({ children }) {
@@ -37,8 +38,21 @@ export default function PortalLayout({ children }) {
         
         {/* FIXED HEADER */}
         <header className="fixed top-0 z-20 flex h-[var(--top-header-height)] w-full items-center justify-between border-b border-[#1e1e2e] bg-[#0f0f18] px-4 md:w-[calc(100%-var(--sidebar-collapsed-width))] lg:w-[calc(100%-var(--sidebar-width))] lg:px-8">
-          <h1 className="text-lg font-semibold text-white md:text-xl">{getPageTitle()}</h1>
-          <div className="flex items-center gap-4">
+          <h1 className="text-lg font-semibold text-white md:text-xl relative z-10">{getPageTitle()}</h1>
+          
+          {/* Mobile Center Logo */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden">
+            <Image 
+              src="/ezinix_logo.png" 
+              alt="Ezinix" 
+              width={100} 
+              height={32} 
+              className="h-8 w-auto object-contain"
+              priority
+            />
+          </div>
+
+          <div className="flex items-center gap-4 relative z-10">
             <button className="relative flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-full hover:bg-[#1a1a2e]">
               <Bell size={20} className="text-slate-300" />
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"></span>
