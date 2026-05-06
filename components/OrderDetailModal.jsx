@@ -165,7 +165,7 @@ export default function OrderDetailModal({ order, onClose }) {
                   {order.notes && (
                     <tr>
                       <td className="px-3 py-2.5 text-slate-400">Order Notes</td>
-                      <td className="px-3 py-2.5 text-slate-300 italic">"{order.notes}"</td>
+                      <td className="px-3 py-2.5 text-slate-300 italic">&quot;{order.notes}&quot;</td>
                     </tr>
                   )}
                 </tbody>
