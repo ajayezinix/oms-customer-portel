@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Clock3, FileText, CheckCircle2, User, Calendar, CreditCard, Search } from "lucide-react";
+import { X, Clock3, FileText, CheckCircle2, User, Calendar, CreditCard, Search, ChevronDown, ChevronUp } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import { formatCurrencyINR, formatDateIN } from "@/lib/format";
 import { createClient } from "@/lib/supabase/client";
@@ -11,6 +11,7 @@ export default function OrderDetailModal({ order, onClose }) {
   const [orderPayments, setOrderPayments] = useState([]);
   const [fetchingDocs, setFetchingDocs] = useState(false);
   const [fetchingPayments, setFetchingPayments] = useState(false);
+  const [showPaymentDetails, setShowPaymentDetails] = useState(false);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -65,6 +66,7 @@ export default function OrderDetailModal({ order, onClose }) {
       document.body.style.overflow = "";
       setDocuments({ invoice: [], order_detail: [], payment_proof: [], delivery_label: [] });
       setOrderPayments([]);
+      setShowPaymentDetails(false);
     }
     return () => {
       document.body.style.overflow = "";
@@ -173,114 +175,139 @@ export default function OrderDetailModal({ order, onClose }) {
             </div>
           </section>
 
-          {/* Amount Section */}
-          <section className="rounded-2xl border border-[#1e1e2e] bg-[#13131a] p-4 md:p-5 shadow-lg md:shadow-sm">
-            <h4 className="mb-4 flex items-center gap-2 text-sm font-medium text-slate-400">
-              <CreditCard size={16} /> Payment Summary
-            </h4>
-            <div className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-300">Total Amount</span>
-                <span className="font-medium text-white">{formatCurrencyINR(order.total_order_amount)}</span>
+          {/* Amount & Payment Card */}
+          <section className="rounded-2xl border border-[#1e1e2e] bg-[#13131a] shadow-lg md:shadow-sm overflow-hidden transition-all">
+            <button 
+              onClick={() => setShowPaymentDetails(!showPaymentDetails)}
+              className="flex w-full items-center justify-between p-4 md:p-5 hover:bg-[#1a1a2e]/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-full ${showPaymentDetails ? "bg-[#6c63ff]/20 text-[#6c63ff]" : "bg-[#1e1e2e] text-slate-400"}`}>
+                  <CreditCard size={20} />
+                </div>
+                <div className="text-left">
+                  <h4 className="text-sm font-semibold text-white">Payment Summary</h4>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wider">Click to view details & proofs</p>
+                </div>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-300">Amount Received</span>
-                <span className="font-medium text-emerald-400">{formatCurrencyINR(order.payment_received)}</span>
+              <div className="flex items-center gap-4">
+                <div className="text-right hidden sm:block">
+                  <p className="text-[10px] text-slate-500 uppercase tracking-tighter">Balance Due</p>
+                  <p className={`text-xs font-bold ${(Number(order.total_order_amount) - Number(order.payment_received || 0)) > 0 ? "text-rose-400" : "text-emerald-400"}`}>
+                    {formatCurrencyINR(Math.max(0, Number(order.total_order_amount) - Number(order.payment_received || 0)))}
+                  </p>
+                </div>
+                {showPaymentDetails ? <ChevronUp size={20} className="text-slate-400" /> : <ChevronDown size={20} className="text-slate-400" />}
               </div>
-              <div className="my-2 h-px w-full bg-[#1e1e2e]" />
-              <div className="flex justify-between">
-                <span className="font-medium text-slate-300">Balance Due</span>
-                <span className={`text-lg font-bold ${
-                  (Number(order.total_order_amount) - Number(order.payment_received || 0)) > 0 
-                  ? "text-rose-400" 
-                  : "text-emerald-400"
-                }`}>
-                  {formatCurrencyINR(Math.max(0, Number(order.total_order_amount) - Number(order.payment_received || 0)))}
-                </span>
-              </div>
-            </div>
+            </button>
 
-            {/* Payment Breakdown */}
-            {(orderPayments.length > 0 || (order.utr_numbers && order.utr_numbers.length > 0) || documents.payment_proof.length > 0) && (
-              <div className="mt-6 space-y-4">
-                <h5 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Payment Breakdown</h5>
-                
-                {/* Modern Split Payments */}
-                {orderPayments.length > 0 && (
-                  <div className="space-y-2">
-                    {orderPayments.map((p) => (
-                      <div key={p.payment_id} className="rounded-xl bg-[#0a0a0f] p-3 border border-[#1e1e2e]">
-                        <div className="flex justify-between items-start mb-1">
-                          <div className="flex flex-col">
-                            <span className="text-sm font-medium text-white">
-                              {p.is_cash ? "Cash" : p.account?.account_name || "Online"}
-                            </span>
-                            <span className="text-[10px] text-slate-500">{formatDateIN(p.created_at)}</span>
-                          </div>
-                          <span className="text-sm font-bold text-emerald-400">{formatCurrencyINR(p.amount)}</span>
-                        </div>
-                        {p.reference_number && (
-                          <div className="mt-2 flex items-center gap-1.5 rounded bg-[#1a1a2e] px-2 py-1 border border-[#2e2e3e]">
-                            <span className="text-[9px] font-bold text-slate-500 uppercase">UTR:</span>
-                            <span className="font-mono text-[11px] text-slate-300">{p.reference_number}</span>
-                          </div>
-                        )}
-                        {p.surcharge_amount > 0 && (
-                          <p className="mt-1 text-[10px] text-amber-500/80">
-                            Includes {formatCurrencyINR(p.surcharge_amount)} processing fee
-                          </p>
-                        )}
-                      </div>
-                    ))}
+            {showPaymentDetails && (
+              <div className="border-t border-[#1e1e2e] bg-[#0a0a0f]/50 p-4 md:p-5 space-y-6 animate-in slide-in-from-top duration-300">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-400">Total Amount</span>
+                    <span className="font-medium text-white">{formatCurrencyINR(order.total_order_amount)}</span>
                   </div>
-                )}
-
-                {/* Legacy UTR Numbers */}
-                {order.utr_numbers && order.utr_numbers.length > 0 && (
-                  <div className="space-y-2">
-                    {order.utr_numbers.map((utr, i) => (
-                      <div key={i} className="flex items-center gap-2 rounded-lg bg-[#0a0a0f] p-3 border border-dashed border-[#2e2e3e]">
-                        <div className="h-2 w-2 rounded-full bg-[#6c63ff]" />
-                        <span className="font-mono text-xs text-slate-300">{utr}</span>
-                      </div>
-                    ))}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-400">Amount Received</span>
+                    <span className="font-medium text-emerald-400">{formatCurrencyINR(order.payment_received)}</span>
                   </div>
-                )}
+                  <div className="my-2 h-px w-full bg-[#1e1e2e]" />
+                  <div className="flex justify-between">
+                    <span className="font-medium text-slate-300">Balance Due</span>
+                    <span className={`text-lg font-bold ${
+                      (Number(order.total_order_amount) - Number(order.payment_received || 0)) > 0 
+                      ? "text-rose-400" 
+                      : "text-emerald-400"
+                    }`}>
+                      {formatCurrencyINR(Math.max(0, Number(order.total_order_amount) - Number(order.payment_received || 0)))}
+                    </span>
+                  </div>
+                </div>
 
-                {/* Payment Proof Screenshots */}
-                {documents.payment_proof.length > 0 && (
-                  <div className="mt-6 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="h-px flex-1 bg-[#1e1e2e]" />
-                      <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Verification Images</p>
-                      <div className="h-px flex-1 bg-[#1e1e2e]" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      {documents.payment_proof.map((doc, i) => (
-                        <a 
-                          key={i} 
-                          href={doc.file_url} 
-                          target="_blank" 
-                          rel="noreferrer"
-                          className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-[#1e1e2e] bg-[#0a0a0f] shadow-inner"
-                        >
-                          <img 
-                            src={doc.file_url} 
-                            alt={doc.file_name} 
-                            className="h-full w-full object-cover opacity-70 transition-all duration-300 group-hover:scale-110 group-hover:opacity-100"
-                          />
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                            <div className="rounded-full bg-white/20 p-2 backdrop-blur-md">
-                              <Search size={20} className="text-white" />
+                {/* Payment Breakdown */}
+                {(orderPayments.length > 0 || (order.utr_numbers && order.utr_numbers.length > 0) || documents.payment_proof.length > 0) && (
+                  <div className="space-y-4">
+                    <h5 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Payment Breakdown</h5>
+                    
+                    {/* Modern Split Payments */}
+                    {orderPayments.length > 0 && (
+                      <div className="space-y-2">
+                        {orderPayments.map((p) => (
+                          <div key={p.payment_id} className="rounded-xl bg-[#0a0a0f] p-3 border border-[#1e1e2e]">
+                            <div className="flex justify-between items-start mb-1">
+                              <div className="flex flex-col">
+                                <span className="text-sm font-medium text-white">
+                                  {p.is_cash ? "Cash" : p.account?.account_name || "Online"}
+                                </span>
+                                <span className="text-[10px] text-slate-500">{formatDateIN(p.created_at)}</span>
+                              </div>
+                              <span className="text-sm font-bold text-emerald-400">{formatCurrencyINR(p.amount)}</span>
                             </div>
-                            <span className="mt-2 text-[10px] font-bold text-white uppercase tracking-widest">Full Preview</span>
+                            {p.reference_number && (
+                              <div className="mt-2 flex items-center gap-1.5 rounded bg-[#1a1a2e] px-2 py-1 border border-[#2e2e3e]">
+                                <span className="text-[9px] font-bold text-slate-500 uppercase">UTR:</span>
+                                <span className="font-mono text-[11px] text-slate-300">{p.reference_number}</span>
+                              </div>
+                            )}
+                            {p.surcharge_amount > 0 && (
+                              <p className="mt-1 text-[10px] text-amber-500/80">
+                                Includes {formatCurrencyINR(p.surcharge_amount)} processing fee
+                              </p>
+                            )}
                           </div>
-                          <div className="absolute bottom-2 left-2 rounded bg-black/60 px-1.5 py-0.5 backdrop-blur-md">
-                            <p className="text-[8px] text-white/80 truncate max-w-[100px]">{doc.file_name}</p>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Legacy UTR Numbers */}
+                    {order.utr_numbers && order.utr_numbers.length > 0 && (
+                      <div className="space-y-2">
+                        {order.utr_numbers.map((utr, i) => (
+                          <div key={i} className="flex items-center gap-2 rounded-lg bg-[#0a0a0f] p-3 border border-dashed border-[#2e2e3e]">
+                            <div className="h-2 w-2 rounded-full bg-[#6c63ff]" />
+                            <span className="font-mono text-xs text-slate-300">{utr}</span>
                           </div>
-                        </a>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Payment Proof Screenshots */}
+                    {documents.payment_proof.length > 0 && (
+                      <div className="mt-6 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <div className="h-px flex-1 bg-[#1e1e2e]" />
+                          <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Verification Images</p>
+                          <div className="h-px flex-1 bg-[#1e1e2e]" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          {documents.payment_proof.map((doc, i) => (
+                            <a 
+                              key={i} 
+                              href={doc.file_url} 
+                              target="_blank" 
+                              rel="noreferrer"
+                              className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-[#1e1e2e] bg-[#0a0a0f] shadow-inner"
+                            >
+                              <img 
+                                src={doc.file_url} 
+                                alt={doc.file_name} 
+                                className="h-full w-full object-cover opacity-70 transition-all duration-300 group-hover:scale-110 group-hover:opacity-100"
+                              />
+                              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                <div className="rounded-full bg-white/20 p-2 backdrop-blur-md">
+                                  <Search size={20} className="text-white" />
+                                </div>
+                                <span className="mt-2 text-[10px] font-bold text-white uppercase tracking-widest">Full Preview</span>
+                              </div>
+                              <div className="absolute bottom-2 left-2 rounded bg-black/60 px-1.5 py-0.5 backdrop-blur-md">
+                                <p className="text-[8px] text-white/80 truncate max-w-[100px]">{doc.file_name}</p>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
