@@ -54,11 +54,11 @@ export default function OrderDetailModal({ order, onClose }) {
   if (!order) return null;
   
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm transition-opacity">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm transition-opacity md:items-center pb-[var(--bottom-nav-height)] md:pb-0">
       {/* Overlay to click to close (desktop) */}
       <div className="absolute inset-0 hidden md:block" onClick={onClose} />
       
-      <div className="relative flex h-full w-full flex-col bg-[#0a0a0f] md:max-w-[480px] md:border-l md:border-[#1e1e2e] md:bg-[#13131a] md:shadow-2xl overflow-y-auto animate-in slide-in-from-bottom md:slide-in-from-right duration-300">
+      <div className="relative flex h-[calc(100%-var(--bottom-nav-height))] w-full flex-col bg-[#0a0a0f] md:h-full md:max-w-[480px] md:border-l md:border-[#1e1e2e] md:bg-[#13131a] md:shadow-2xl overflow-y-auto animate-in slide-in-from-bottom md:slide-in-from-right duration-300">
         
         {/* Header - Fixed */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#1e1e2e] bg-[#0f0f18] px-4 py-4 md:bg-[#13131a] md:px-6 md:py-5">

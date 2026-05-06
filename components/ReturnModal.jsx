@@ -32,7 +32,7 @@ export default function ReturnModal({ orders, onSubmit, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm transition-opacity md:items-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm transition-opacity md:items-center pb-[var(--bottom-nav-height)] md:pb-0">
       {/* Overlay to click to close */}
       <div className="absolute inset-0" onClick={onClose} />
       

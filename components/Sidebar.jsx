@@ -65,7 +65,7 @@ export default function Sidebar() {
       </aside>
 
       {/* MOBILE BOTTOM NAV */}
-      <nav className="safe-bottom fixed bottom-0 left-0 right-0 z-40 grid h-[var(--bottom-nav-height)] grid-cols-5 border-t border-[#1e1e2e] bg-[#0f0f18] md:hidden">
+      <nav className="safe-bottom fixed bottom-0 left-0 right-0 z-[100] grid h-[var(--bottom-nav-height)] grid-cols-5 border-t border-[#1e1e2e] bg-[#0f0f18] md:hidden">
         {nav.map((item) => {
           const ActiveIcon = item.icon;
           const active = pathname.startsWith(item.href);
