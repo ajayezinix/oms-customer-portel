@@ -15,6 +15,15 @@ body {
 html,
 body {
   min-height: 100%;
+  overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
+  user-select: none; /* Prevent text selection to feel more like a native app */
+  -webkit-user-select: none;
+}
+
+/* Allow selection in inputs and dashboard stats */
+input, textarea, [data-selectable="true"] {
+  user-select: text !important;
+  -webkit-user-select: text !important;
 }
 
 /* Safe area for iPhone notch and home bar */
