@@ -2,15 +2,6 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request) {
-  if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
-    /* dev mode — let everything through, redirect "/" to dashboard */
-    if (request.nextUrl.pathname === "/") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
-    }
-    return NextResponse.next({ request });
-  }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

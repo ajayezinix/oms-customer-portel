@@ -6,16 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 
 const AuthContext = createContext(null);
 
-const DEMO_CUSTOMER = {
-  customer_id: "demo-123",
-  customer_name: "Demo Customer",
-  email_address: "demo@ezinix.com",
-  company_address: "Delhi, India",
-  phone_number: "+91 9999999999",
-};
-
 export function AuthProvider({ children }) {
-  const authDisabled = process.env.NEXT_PUBLIC_DISABLE_AUTH === "true";
   const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
   const [session, setSession] = useState(null);
@@ -33,13 +24,6 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    if (authDisabled) {
-      setSession({ user: { email: DEMO_CUSTOMER.email_address } });
-      setCustomer(DEMO_CUSTOMER);
-      setLoading(false);
-      return;
-    }
-
     const init = async () => {
       const {
         data: { session: currentSession },
@@ -60,13 +44,9 @@ export function AuthProvider({ children }) {
 
     return () => subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authDisabled, router, supabase]);
+  }, [router, supabase]);
 
   const logout = async () => {
-    if (authDisabled) {
-      router.push("/dashboard");
-      return;
-    }
     await supabase.auth.signOut();
     setCustomer(null);
     setSession(null);
