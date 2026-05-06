@@ -250,12 +250,16 @@ export default function LoginPage() {
                   onChange={(e) => onOtpChange(idx, e.target.value)}
                   onKeyDown={(e) => onOtpKeyDown(e, idx)}
                   onPaste={idx === 0 ? onOtpPaste : undefined}
-                  className={`h-14 w-12 flex-1 rounded-xl border bg-[#1e1e2e] text-center text-xl font-bold text-white outline-none transition-colors focus:ring-1 ${
+                  className={`h-14 w-12 min-w-[44px] flex-1 rounded-xl border bg-[#1e1e2e] text-center text-xl font-bold text-white outline-none transition-colors focus:ring-1 ${
                     error ? "border-[#ef4444] focus:border-[#ef4444] focus:ring-[#ef4444]" : "border-[#2e2e3e] focus:border-[#6c63ff] focus:ring-[#6c63ff]"
                   }`}
                 />
               ))}
             </div>
+
+            <p className="text-center text-xs text-[#94a3b8]">
+              Code expires in 10 minutes
+            </p>
 
             {error && (
               <div className="flex items-start gap-2 rounded-xl border border-[#ef4444]/20 bg-[#ef4444]/10 p-3">
