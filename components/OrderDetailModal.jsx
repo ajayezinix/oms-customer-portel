@@ -170,16 +170,29 @@ export default function OrderDetailModal({ order, onClose }) {
                       <td className="px-3 py-2.5 text-slate-300 italic">&quot;{order.notes}&quot;</td>
                     </tr>
                   )}
-                  <tr>
-                    <td className="px-3 py-2.5 text-slate-400">Order Date</td>
-                    <td className="px-3 py-2.5 text-white font-medium">{formatDateIN(order.order_date)}</td>
-                  </tr>
-                  <tr>
-                    <td className="px-3 py-2.5 text-slate-400">Handled By</td>
-                    <td className="px-3 py-2.5 text-white font-medium">{order.last_updated_by_name || order.created_by_name || "System"}</td>
-                  </tr>
                 </tbody>
               </table>
+            </div>
+          </section>
+
+          {/* Order Information Section */}
+          <section className="rounded-2xl border border-[#1e1e2e] bg-[#13131a] p-4 md:p-5 shadow-lg md:shadow-sm">
+            <h4 className="mb-4 text-sm font-medium text-slate-400">Order Details</h4>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Calendar className="mt-0.5 text-slate-500" size={16} />
+                <div>
+                  <p className="text-xs text-slate-500">Order Date</p>
+                  <p className="text-sm font-medium text-slate-200">{formatDateIN(order.order_date)}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <User className="mt-0.5 text-slate-500" size={16} />
+                <div>
+                  <p className="text-xs text-slate-500">Handled By</p>
+                  <p className="text-sm font-medium text-slate-200">{order.last_updated_by_name || order.created_by_name || "System"}</p>
+                </div>
+              </div>
             </div>
           </section>
 
