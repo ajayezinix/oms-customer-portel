@@ -14,6 +14,9 @@ module.exports = {
         ezBorder: "#1e1e2e",
         ezPrimary: "#6c63ff",
       },
+      fontFamily: {
+        sifonn: ["var(--font-sifonn)"],
+      },
     },
   },
   plugins: [],

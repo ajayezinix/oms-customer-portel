@@ -4,7 +4,6 @@ import Sidebar from "@/components/Sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import Image from "next/image";
 import { Bell } from "lucide-react";
 
 export default function PortalLayout({ children }) {
@@ -42,14 +41,7 @@ export default function PortalLayout({ children }) {
           
           {/* Mobile Center Logo */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden">
-            <Image 
-              src="/ezinix_logo.png" 
-              alt="Ezinix" 
-              width={100} 
-              height={32} 
-              className="h-8 w-auto object-contain"
-              priority
-            />
+            <span className="font-sifonn text-xl tracking-widest text-white">EZINIX</span>
           </div>
 
           <div className="flex items-center gap-4 relative z-10">

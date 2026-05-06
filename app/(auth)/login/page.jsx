@@ -3,7 +3,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { toast } from "sonner";
 import { Mail, ArrowLeft, XCircle, Loader2, CheckCircle2, KeyRound } from "lucide-react";
 
@@ -158,17 +157,9 @@ export default function LoginPage() {
 
         {/* ── Logo ── */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex items-center justify-center">
-            <Image 
-              src="/ezinix_logo.png" 
-              alt="Ezinix Logo" 
-              width={64} 
-              height={64} 
-              className="h-16 w-auto object-contain"
-              priority
-            />
+          <div className="mx-auto mb-2 flex items-center justify-center">
+            <span className="font-sifonn text-5xl tracking-widest text-white">EZINIX</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Ezinix</h1>
           <p className="mt-1 text-sm text-[#94a3b8]">Customer Portal</p>
         </div>
 
