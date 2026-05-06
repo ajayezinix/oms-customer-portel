@@ -13,7 +13,7 @@ export default function StatusBadge({ status = "pending" }) {
   const normalized = String(status).toLowerCase();
   const cls = colorMap[normalized] || "bg-[#1e1e2e] text-slate-300";
   return (
-    <span className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize ${cls}`}>
+    <span className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium capitalize md:px-2 md:py-0.5 md:text-[11px] whitespace-nowrap ${cls}`}>
       {String(status).replace("_", " ")}
     </span>
   );
