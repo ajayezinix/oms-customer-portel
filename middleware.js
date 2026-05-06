@@ -12,29 +12,33 @@ export async function middleware(request) {
     return NextResponse.next({ request });
   }
 
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  /* During build / prerender env vars may be absent — skip auth checks */
+  if (!url || !key) {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
-    {
-      cookies: {
-        get(name) {
-          return request.cookies.get(name)?.value;
-        },
-        set(name, value, options) {
-          request.cookies.set({ name, value, ...options });
-          response = NextResponse.next({ request });
-          response.cookies.set({ name, value, ...options });
-        },
-        remove(name, options) {
-          request.cookies.set({ name, value: "", ...options });
-          response = NextResponse.next({ request });
-          response.cookies.set({ name, value: "", ...options });
-        },
+  const supabase = createServerClient(url, key, {
+    cookies: {
+      get(name) {
+        return request.cookies.get(name)?.value;
       },
-    }
-  );
+      set(name, value, options) {
+        request.cookies.set({ name, value, ...options });
+        response = NextResponse.next({ request });
+        response.cookies.set({ name, value, ...options });
+      },
+      remove(name, options) {
+        request.cookies.set({ name, value: "", ...options });
+        response = NextResponse.next({ request });
+        response.cookies.set({ name, value: "", ...options });
+      },
+    },
+  });
 
   const {
     data: { session },
