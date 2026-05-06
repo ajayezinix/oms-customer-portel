@@ -86,7 +86,6 @@ export default function OrderDetailModal({ order, onClose }) {
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#1e1e2e] bg-[#0f0f18] px-4 py-4 md:bg-[#13131a] md:px-6 md:py-5">
           <div>
             <h3 className="text-lg font-semibold text-white md:text-xl">Order {order.display_id}</h3>
-            <p className="text-sm text-slate-400">{formatDateIN(order.order_date)}</p>
           </div>
           <button 
             onClick={onClose} 
@@ -170,9 +169,87 @@ export default function OrderDetailModal({ order, onClose }) {
                       <td className="px-3 py-2.5 text-slate-300 italic">&quot;{order.notes}&quot;</td>
                     </tr>
                   )}
+                  <tr>
+                    <td className="px-3 py-2.5 text-slate-400">Order Date</td>
+                    <td className="px-3 py-2.5 text-white font-medium">{formatDateIN(order.order_date)}</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2.5 text-slate-400">Handled By</td>
+                    <td className="px-3 py-2.5 text-white font-medium">{order.last_updated_by_name || order.created_by_name || "System"}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
+          </section>
+
+          {/* Documents Section */}
+          <section className="rounded-2xl border border-[#1e1e2e] bg-[#13131a] p-4 md:p-5 shadow-lg md:shadow-sm">
+            <h4 className="mb-4 flex items-center gap-2 text-sm font-medium text-slate-400">
+              <FileText size={16} /> Documents
+            </h4>
+            {fetchingDocs ? (
+              <div className="flex items-center gap-3 rounded-xl border border-[#1e1e2e] bg-[#1a1a2e]/30 p-4">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#6c63ff] border-t-transparent"></div>
+                <p className="text-sm text-slate-400">Locating documents...</p>
+              </div>
+            ) : (documents.invoice.length > 0 || documents.order_detail.length > 0) ? (
+              <div className="grid gap-3">
+                {/* Order Detail Files */}
+                {documents.order_detail.map((doc, i) => (
+                  <a
+                    key={`detail-${i}`}
+                    href={doc.file_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    download={doc.file_name}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-[#1e1e2e] bg-[#0a0a0f] p-4 transition-all hover:bg-[#1a1a2e]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1a1a2e] text-[#6c63ff]">
+                        <FileText size={18} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">Order Detail File</p>
+                        <p className="text-[10px] text-slate-500 truncate max-w-[150px]">{doc.file_name}</p>
+                      </div>
+                    </div>
+                    <div className="rounded-lg bg-[#6c63ff] px-3 py-1.5 text-xs font-semibold text-white">
+                      Download
+                    </div>
+                  </a>
+                ))}
+
+                {/* Invoices */}
+                {documents.invoice.map((doc, i) => (
+                  <a
+                    key={`invoice-${i}`}
+                    href={doc.file_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    download={doc.file_name}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-[#6c63ff]/20 bg-[#6c63ff]/5 p-4 transition-all hover:bg-[#6c63ff]/10"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#6c63ff]/20 text-[#6c63ff]">
+                        <FileText size={18} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">Invoice</p>
+                        <p className="text-[10px] text-slate-500 truncate max-w-[150px]">{doc.file_name}</p>
+                      </div>
+                    </div>
+                    <div className="rounded-lg bg-[#6c63ff] px-3 py-1.5 text-xs font-semibold text-white shadow-lg shadow-[#6c63ff]/20">
+                      Download
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 rounded-xl border border-dashed border-[#2e2e3e] bg-[#1a1a2e]/50 p-4">
+                <Clock3 size={20} className="text-slate-500" /> 
+                <p className="text-sm text-slate-400">No documents available yet.</p>
+              </div>
+            )}
           </section>
 
           {/* Amount & Payment Card */}
@@ -310,97 +387,6 @@ export default function OrderDetailModal({ order, onClose }) {
                     )}
                   </div>
                 )}
-              </div>
-            )}
-          </section>
-
-          {/* Details Section */}
-          <section className="rounded-2xl border border-[#1e1e2e] bg-[#13131a] p-4 md:p-5 shadow-lg md:shadow-sm">
-            <h4 className="mb-4 text-sm font-medium text-slate-400">Order Information</h4>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Calendar className="mt-0.5 text-slate-500" size={16} />
-                <div>
-                  <p className="text-xs text-slate-500">Order Date</p>
-                  <p className="text-sm font-medium text-slate-200">{formatDateIN(order.order_date)}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <User className="mt-0.5 text-slate-500" size={16} />
-                <div>
-                  <p className="text-xs text-slate-500">Handled By</p>
-                  <p className="text-sm font-medium text-slate-200">{order.last_updated_by_name || order.created_by_name || "System"}</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Documents Section */}
-          <section className="rounded-2xl border border-[#1e1e2e] bg-[#13131a] p-4 md:p-5 shadow-lg md:shadow-sm">
-            <h4 className="mb-4 flex items-center gap-2 text-sm font-medium text-slate-400">
-              <FileText size={16} /> Documents
-            </h4>
-            {fetchingDocs ? (
-              <div className="flex items-center gap-3 rounded-xl border border-[#1e1e2e] bg-[#1a1a2e]/30 p-4">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#6c63ff] border-t-transparent"></div>
-                <p className="text-sm text-slate-400">Locating documents...</p>
-              </div>
-            ) : (documents.invoice.length > 0 || documents.order_detail.length > 0) ? (
-              <div className="grid gap-3">
-                {/* Order Detail Files */}
-                {documents.order_detail.map((doc, i) => (
-                  <a
-                    key={`detail-${i}`}
-                    href={doc.file_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    download={doc.file_name}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-[#1e1e2e] bg-[#0a0a0f] p-4 transition-all hover:bg-[#1a1a2e]"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1a1a2e] text-[#6c63ff]">
-                        <FileText size={18} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-white">Order Detail File</p>
-                        <p className="text-[10px] text-slate-500 truncate max-w-[150px]">{doc.file_name}</p>
-                      </div>
-                    </div>
-                    <div className="rounded-lg bg-[#6c63ff] px-3 py-1.5 text-xs font-semibold text-white">
-                      Download
-                    </div>
-                  </a>
-                ))}
-
-                {/* Invoices */}
-                {documents.invoice.map((doc, i) => (
-                  <a
-                    key={`invoice-${i}`}
-                    href={doc.file_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    download={doc.file_name}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-[#6c63ff]/20 bg-[#6c63ff]/5 p-4 transition-all hover:bg-[#6c63ff]/10"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#6c63ff]/20 text-[#6c63ff]">
-                        <FileText size={18} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-white">Invoice</p>
-                        <p className="text-[10px] text-slate-500 truncate max-w-[150px]">{doc.file_name}</p>
-                      </div>
-                    </div>
-                    <div className="rounded-lg bg-[#6c63ff] px-3 py-1.5 text-xs font-semibold text-white shadow-lg shadow-[#6c63ff]/20">
-                      Download
-                    </div>
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 rounded-xl border border-dashed border-[#2e2e3e] bg-[#1a1a2e]/50 p-4">
-                <Clock3 size={20} className="text-slate-500" /> 
-                <p className="text-sm text-slate-400">No documents available yet.</p>
               </div>
             )}
           </section>
