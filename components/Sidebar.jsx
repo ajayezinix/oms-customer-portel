@@ -6,10 +6,10 @@ import { LayoutDashboard, ListOrdered, RotateCcw, Wallet, UserCircle2 } from "lu
 import { useAuth } from "@/context/AuthContext";
 
 const nav = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/orders", label: "Orders", icon: ListOrdered },
-  { href: "/returns", label: "Returns", icon: RotateCcw },
-  { href: "/payments", label: "Payments", icon: Wallet },
+  { href: "/payments", label: "Pay", icon: Wallet },
+  { href: "/account", label: "Account", icon: UserCircle2 },
 ];
 
 export default function Sidebar() {

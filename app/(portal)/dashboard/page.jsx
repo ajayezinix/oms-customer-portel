@@ -49,11 +49,11 @@ export default function DashboardPage() {
       {/* Welcome Message */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-white md:text-2xl lg:text-3xl">
-            Welcome back, {customer?.customer_name?.split(" ")[0] || "Customer"}
+          <h1 className="text-2xl font-bold text-white md:text-3xl">
+            Hi, {customer?.customer_name?.split(" ")[0] || "there"} 👋
           </h1>
           <p className="text-sm text-slate-400 mt-1 truncate max-w-[300px] md:max-w-none">
-            {customer?.company_name || "Manage your orders and business metrics."}
+            {customer?.company_name || "Welcome to your customer portal"}
           </p>
         </div>
         <button onClick={logout} className="hidden md:flex rounded-xl border border-[#1e1e2e] bg-[#13131a] px-4 py-2 text-sm font-medium hover:bg-[#1a1a2e] transition-colors items-center gap-2">
@@ -66,32 +66,22 @@ export default function DashboardPage() {
       ) : (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4 lg:gap-6">
           <Card 
-            title="Total Orders" 
+            title="Outstanding" 
+            value={formatCurrencyShort(stats.outstanding)} 
+            icon={<AlertCircle size={20} className={stats.outstanding > 0 ? "text-rose-400" : "text-slate-400"} />} 
+          />
+          <Card 
+            title="Orders" 
             value={stats.totalOrders} 
             icon={<LayoutDashboard size={20} className="text-[#6c63ff]" />} 
           />
           <Card 
-            title="Order Value" 
-            value={
-              <>
-                <span className="md:hidden">{formatCurrencyShort(stats.totalValue)}</span>
-                <span className="hidden md:inline">{formatCurrencyINR(stats.totalValue)}</span>
-              </>
-            } 
+            title="Total Value" 
+            value={formatCurrencyShort(stats.totalValue)} 
             icon={<TrendingUp size={20} className="text-emerald-400" />} 
           />
           <Card 
-            title="Outstanding" 
-            value={
-              <>
-                <span className="md:hidden">{formatCurrencyShort(stats.outstanding)}</span>
-                <span className="hidden md:inline">{formatCurrencyINR(stats.outstanding)}</span>
-              </>
-            } 
-            icon={<AlertCircle size={20} className={stats.outstanding > 0 ? "text-rose-400" : "text-slate-400"} />} 
-          />
-          <Card 
-            title="Open Returns" 
+            title="Returns Open" 
             value={stats.openReturns} 
             icon={<RefreshCcw size={20} className="text-amber-400" />} 
           />
@@ -109,22 +99,40 @@ export default function DashboardPage() {
 
         {/* Mobile View: Card List */}
         <div className="grid gap-3 md:hidden">
-          {recentOrders.map((o) => (
-            <Link key={o.order_id} href={`/orders`} className="block rounded-xl border border-[#1e1e2e] bg-[#0a0a0f] p-4 active:bg-[#1a1a2e]">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="font-semibold text-white">{o.display_id}</span>
-                <span className="font-semibold text-white">{formatCurrencyINR(o.total_order_amount)}</span>
-              </div>
-              <div className="mb-3 flex items-center justify-between text-xs text-slate-400">
-                <span>{formatDateIN(o.order_date)}</span>
-                <span>{o.last_updated_by_name || o.created_by_name || "System"}</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <StatusBadge status={o.payment_status} />
-                <StatusBadge status={o.fulfillment_status} />
-              </div>
-            </Link>
-          ))}
+          {recentOrders.map((o) => {
+            const isOutstanding = Number(o.total_order_amount || 0) - Number(o.payment_received || 0) > 0;
+            const dueAmount = Number(o.total_order_amount || 0) - Number(o.payment_received || 0);
+            
+            return (
+              <Link key={o.order_id} href={`/orders`} className="block rounded-xl border border-[#1e1e2e] bg-[#0a0a0f] p-4 active:bg-[#1a1a2e]">
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="font-bold text-white text-lg">{o.display_id}</span>
+                </div>
+                <div className="mb-3 flex items-center gap-2 text-sm text-slate-400">
+                  <span>{formatDateIN(o.order_date)}</span>
+                  <span>•</span>
+                  <span className="font-medium text-white">{formatCurrencyINR(o.total_order_amount)}</span>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <StatusBadge status={o.payment_status} />
+                  <StatusBadge status={o.fulfillment_status} />
+                </div>
+
+                {isOutstanding ? (
+                  <div className="flex items-center gap-2 rounded-lg bg-rose-500/10 p-2 text-xs font-medium text-rose-400 border border-rose-500/20">
+                    <AlertCircle size={14} />
+                    <span>Pay {formatCurrencyINR(dueAmount)}</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 p-2 text-xs font-medium text-emerald-400 border border-emerald-500/20">
+                    <Download size={14} />
+                    <span>Download Invoice</span>
+                  </div>
+                )}
+              </Link>
+            );
+          })}
           {recentOrders.length === 0 && !loading && (
             <p className="text-center text-sm text-slate-400 py-4">No recent orders found.</p>
           )}
