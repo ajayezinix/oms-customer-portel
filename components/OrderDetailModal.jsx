@@ -164,6 +164,7 @@ export default function OrderDetailModal({ order, onClose }) {
                     href={doc.file_url}
                     target="_blank"
                     rel="noreferrer"
+                    download={doc.file_name}
                     className="flex items-center justify-between gap-3 rounded-xl border border-[#1e1e2e] bg-[#0a0a0f] p-4 transition-all hover:bg-[#1a1a2e]"
                   >
                     <div className="flex items-center gap-3">
@@ -176,7 +177,7 @@ export default function OrderDetailModal({ order, onClose }) {
                       </div>
                     </div>
                     <div className="rounded-lg bg-[#6c63ff] px-3 py-1.5 text-xs font-semibold text-white">
-                      View
+                      Download
                     </div>
                   </a>
                 ))}
@@ -188,6 +189,7 @@ export default function OrderDetailModal({ order, onClose }) {
                     href={doc.file_url}
                     target="_blank"
                     rel="noreferrer"
+                    download={doc.file_name}
                     className="flex items-center justify-between gap-3 rounded-xl border border-[#6c63ff]/20 bg-[#6c63ff]/5 p-4 transition-all hover:bg-[#6c63ff]/10"
                   >
                     <div className="flex items-center gap-3">
