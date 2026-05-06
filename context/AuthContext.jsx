@@ -6,6 +6,14 @@ import { createClient } from "@/lib/supabase/client";
 
 const AuthContext = createContext(null);
 
+const DEMO_CUSTOMER = {
+  customer_id: "demo-123",
+  customer_name: "Demo Customer",
+  email_address: "demo@ezinix.com",
+  company_address: "Delhi, India",
+  phone_number: "+91 9999999999",
+};
+
 export function AuthProvider({ children }) {
   const authDisabled = process.env.NEXT_PUBLIC_DISABLE_AUTH === "true";
   const supabase = useMemo(() => createClient(), []);
@@ -15,7 +23,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const loadCustomer = async (email) => {
-    if (!email) return setCustomer(null);
+    if (!email) { setCustomer(null); return; }
     const { data } = await supabase
       .from("customers")
       .select("*")
@@ -26,12 +34,8 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (authDisabled) {
-      setSession({ user: { email: "demo@ezinix.local" } });
-      setCustomer({
-        customer_id: "00000000-0000-0000-0000-000000000000",
-        customer_name: "Demo Customer",
-        email_address: "demo@ezinix.local",
-      });
+      setSession({ user: { email: DEMO_CUSTOMER.email_address } });
+      setCustomer(DEMO_CUSTOMER);
       setLoading(false);
       return;
     }
@@ -55,6 +59,7 @@ export function AuthProvider({ children }) {
     });
 
     return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authDisabled, router, supabase]);
 
   const logout = async () => {
@@ -64,6 +69,7 @@ export function AuthProvider({ children }) {
     }
     await supabase.auth.signOut();
     setCustomer(null);
+    setSession(null);
     router.push("/login");
   };
 

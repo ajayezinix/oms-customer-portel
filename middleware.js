@@ -3,6 +3,12 @@ import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request) {
   if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
+    /* dev mode — let everything through, redirect "/" to dashboard */
+    if (request.nextUrl.pathname === "/") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
     return NextResponse.next({ request });
   }
 
@@ -38,12 +44,21 @@ export async function middleware(request) {
   const protectedRoutes = ["/dashboard", "/orders", "/returns", "/payments", "/account"];
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
 
+  /* Root "/" → redirect based on session */
+  if (pathname === "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = session ? "/dashboard" : "/login";
+    return NextResponse.redirect(url);
+  }
+
+  /* Not logged in + protected route → /login */
   if (!session && isProtected) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
+  /* Already logged in + on /login → /dashboard */
   if (session && pathname === "/login") {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
@@ -54,5 +69,13 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/orders/:path*", "/returns/:path*", "/payments/:path*", "/account/:path*", "/login"],
+  matcher: [
+    "/",
+    "/dashboard/:path*",
+    "/orders/:path*",
+    "/returns/:path*",
+    "/payments/:path*",
+    "/account/:path*",
+    "/login",
+  ],
 };
