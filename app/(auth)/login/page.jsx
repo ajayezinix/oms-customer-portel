@@ -157,19 +157,14 @@ export default function LoginPage() {
 
         {/* ── Logo ── */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-2 flex items-center justify-center">
-            <span className="font-sifonn text-5xl tracking-widest text-white">EZINIX</span>
+          <div className="mx-auto flex items-center justify-center">
+            <span className="font-sifonn text-5xl tracking-widest text-[#7b5dfc]">EZINIX</span>
           </div>
-          <p className="mt-1 text-sm text-[#94a3b8]">Customer Portal</p>
         </div>
 
         {step === 1 ? (
           /* ════════════════ STEP 1 — EMAIL ════════════════ */
-          <div className="space-y-6">
-            <div className="text-center">
-              <h2 className="text-xl font-semibold text-white">Welcome back</h2>
-              <p className="mt-1 text-sm text-[#94a3b8]">Sign in to view your orders</p>
-            </div>
+          <div className="space-y-6 pt-4">
 
             <div className="space-y-2">
               <label htmlFor="login-email" className="ml-1 text-sm font-medium text-[#94a3b8]">

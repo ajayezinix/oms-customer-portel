@@ -41,7 +41,7 @@ export default function PortalLayout({ children }) {
           
           {/* Mobile Center Logo */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden">
-            <span className="font-sifonn text-xl tracking-widest text-white">EZINIX</span>
+            <span className="font-sifonn text-xl tracking-widest text-[#7b5dfc]">EZINIX</span>
           </div>
 
           <div className="flex items-center gap-4 relative z-10">
