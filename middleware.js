@@ -40,9 +40,8 @@ export async function middleware(request) {
     },
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data } = await supabase.auth.getSession();
+  const session = data?.session ?? null;
 
   const pathname = request.nextUrl.pathname;
   const protectedRoutes = ["/dashboard", "/orders", "/returns", "/payments", "/account"];
