@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { X, Clock3, FileText, CheckCircle2, User, Calendar, CreditCard } from "lucide-react";
+import StatusBadge from "./StatusBadge";
+import { formatCurrencyINR, formatDateIN } from "@/lib/format";
 import { createClient } from "@/lib/supabase/client";
 
 export default function OrderDetailModal({ order, onClose }) {
