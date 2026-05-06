@@ -85,7 +85,7 @@ export default function OrderDetailModal({ order, onClose }) {
         {/* Header - Fixed */}
         <div className="sticky top-0 z-20 flex items-center justify-between border-b border-[#1e1e2e] bg-[#0f0f18]/90 px-4 py-4 backdrop-blur-xl md:px-8 md:py-6">
           <div>
-            <h3 className="text-lg font-semibold text-white md:text-xl">Order {order.display_id}</h3>
+            <h3 className="text-lg font-semibold text-white md:text-xl">Order Id: {order.display_id}</h3>
           </div>
           <button 
             onClick={onClose} 
