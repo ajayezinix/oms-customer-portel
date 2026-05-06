@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { formatCurrencyINR, formatCurrencyShort, formatDateIN } from "@/lib/format";
-import { LogOut, LayoutDashboard, TrendingUp, AlertCircle, RefreshCcw, ChevronRight, Sparkles } from "lucide-react";
+import { LogOut, LayoutDashboard, TrendingUp, AlertCircle, RefreshCcw, ChevronRight, Download, FileText } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import StatusBadge from "@/components/StatusBadge";
