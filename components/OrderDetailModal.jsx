@@ -76,27 +76,28 @@ export default function OrderDetailModal({ order, onClose }) {
   if (!order) return null;
   
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm transition-opacity md:items-center pb-[var(--bottom-nav-height)] md:pb-0">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md transition-opacity">
       {/* Overlay to click to close (desktop) */}
       <div className="absolute inset-0 hidden md:block" onClick={onClose} />
       
-      <div className="relative flex h-[calc(100%-var(--bottom-nav-height))] w-full flex-col bg-[#0a0a0f] md:h-full md:max-w-[480px] md:border-l md:border-[#1e1e2e] md:bg-[#13131a] md:shadow-2xl overflow-y-auto animate-in slide-in-from-bottom md:slide-in-from-right duration-300">
+      <div className="relative flex h-full w-full flex-col bg-[#0a0a0f] overflow-y-auto animate-in fade-in zoom-in-95 duration-300">
         
         {/* Header - Fixed */}
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#1e1e2e] bg-[#0f0f18] px-4 py-4 md:bg-[#13131a] md:px-6 md:py-5">
+        <div className="sticky top-0 z-20 flex items-center justify-between border-b border-[#1e1e2e] bg-[#0f0f18]/90 px-4 py-4 backdrop-blur-xl md:px-8 md:py-6">
           <div>
             <h3 className="text-lg font-semibold text-white md:text-xl">Order {order.display_id}</h3>
           </div>
           <button 
             onClick={onClose} 
-            className="flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-[#1e1e2e] text-slate-300 hover:bg-[#2e2e3e] hover:text-white"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-[#1e1e2e] text-slate-300 hover:bg-rose-500/20 hover:text-rose-500 transition-all"
           >
-            <X size={20} />
+            <X size={24} />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 space-y-6 p-4 md:p-6 pb-24">
+        {/* Content - Centered for large screens */}
+        <div className="flex-1 overflow-x-hidden">
+          <div className="mx-auto max-w-4xl space-y-8 p-4 md:p-10 pb-32">
           
           {/* Status & Delivery Section */}
           <section className="rounded-2xl border border-[#1e1e2e] bg-[#13131a] p-4 md:p-5 shadow-lg md:shadow-sm">
@@ -390,7 +391,7 @@ export default function OrderDetailModal({ order, onClose }) {
               </div>
             )}
           </section>
-          
+          </div>
         </div>
       </div>
     </div>
